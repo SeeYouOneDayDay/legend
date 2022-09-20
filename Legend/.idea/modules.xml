@@ -2,9 +2,15 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Legend.iml" filepath="$PROJECT_DIR$/Legend.iml" />
-      <module fileurl="file://$PROJECT_DIR$/legendCore/LegendCore.iml" filepath="$PROJECT_DIR$/legendCore/LegendCore.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Legend.iml" filepath="$PROJECT_DIR$/.idea/modules/Legend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/legendCore/Legend.legendCore.iml" filepath="$PROJECT_DIR$/.idea/modules/legendCore/Legend.legendCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/legendCore/Legend.legendCore.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/legendCore/Legend.legendCore.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/legendCore/Legend.legendCore.main.iml" filepath="$PROJECT_DIR$/.idea/modules/legendCore/Legend.legendCore.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/legendCore/Legend.legendCore.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/legendCore/Legend.legendCore.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sample/Legend.sample.iml" filepath="$PROJECT_DIR$/.idea/modules/sample/Legend.sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sample/Legend.sample.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sample/Legend.sample.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sample/Legend.sample.main.iml" filepath="$PROJECT_DIR$/.idea/modules/sample/Legend.sample.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sample/Legend.sample.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sample/Legend.sample.unitTest.iml" />
     </modules>
   </component>
 </project>

@@ -132,10 +132,6 @@ typedef struct {
     void*       fnPtr;
 } JNINativeMethod;
 
-struct _JNIEnv;
-struct _JavaVM;
-typedef const struct JNINativeInterface* C_JNIEnv;
-
 #if defined(__cplusplus)
 typedef _JNIEnv JNIEnv;
 typedef _JavaVM JavaVM;
@@ -143,6 +139,12 @@ typedef _JavaVM JavaVM;
 typedef const struct JNINativeInterface* JNIEnv;
 typedef const struct JNIInvokeInterface* JavaVM;
 #endif
+
+struct _JNIEnv;
+struct _JavaVM;
+typedef const struct JNINativeInterface* C_JNIEnv;
+
+
 
 /*
  * Table of interface function pointers.

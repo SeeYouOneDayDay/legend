@@ -27,8 +27,10 @@ public abstract class ArtMethod extends Struct {
     private static int M_OBJECT_SIZE = -1;
 
     static {
+        // 源码看20以后就有这个变量
         if (Build.VERSION.SDK_INT >= 23) {
             try {
+                //Total size of the Class instance; used when allocating storage on GC heap.
                 Field f_objectSize = Class.class.getDeclaredField("objectSize");
                 f_objectSize.setAccessible(true);
                 M_OBJECT_SIZE = f_objectSize.getInt(Method.class);
@@ -46,7 +48,7 @@ public abstract class ArtMethod extends Struct {
     public static ArtMethod of(Method method) {
 
         if (Build.VERSION.SDK_INT >= 23) {
-            return  Runtime.is64Bit()
+            return Runtime.is64Bit()
                     ? new ArtMethodStructV23_64Bit(method)
                     : new ArtMethodStructV23(method);
         }
@@ -55,8 +57,7 @@ public abstract class ArtMethod extends Struct {
             return Runtime.is64Bit()
                     ? new ArtMethodStructV22_64Bit(method)
                     : new ArtMethodStructV22(method);
-        }
-        else {
+        } else {
             return new ArtMethodStructV19(method);
         }
     }
@@ -102,7 +103,7 @@ public abstract class ArtMethod extends Struct {
                 accessFlags |= Modifier.PRIVATE;
                 artMethod.setAccessFlags(accessFlags);
                 return artMethod;
-            }else {
+            } else {
                 Constructor<Method> constructor = Method.class.getDeclaredConstructor();
                 // we can't use constructor.setAccessible(true); because Google does not like it
                 AccessibleObject.setAccessible(new AccessibleObject[]{constructor}, true);

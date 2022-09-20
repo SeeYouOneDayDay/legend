@@ -36,6 +36,7 @@ public class Runtime {
         return getVmVersion().startsWith("2");
     }
 
+    // 1.6.0
     public static String getVmVersion() {
         return System.getProperty("java.vm.version");
     }

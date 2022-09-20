@@ -4,12 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.lody.legend.HookManager;
+
+import java.lang.reflect.Method;
 
 /**
  * @author Lody
@@ -68,7 +74,12 @@ public class MainActivity extends Activity {
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, MainActivity.class));
+//                startActivity(new Intent(MainActivity.this, MainActivity.class));
+
+                HookManager.getDefault().hookMethod(getMethod(MainActivity.class,"one",String.class),
+                        getMethod(MainActivity.class,"two",String.class));
+
+                Log.i("sanbo.legend",MainActivity.one("jhello"));
             }
         });
     }
@@ -81,5 +92,34 @@ public class MainActivity extends Activity {
         textView = (TextView) findViewById(R.id.text);
         button3 = (Button) findViewById(R.id.startActivity);
     }
+    public  static String one(String  one) {
+        return "hello, It's one("+one+")";
+    }
 
+    public  static String two(String  one) {
+        return "hello, It's two("+one+")";
+    }
+
+    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... types) {
+        if (clazz == null || TextUtils.isEmpty(methodName)) {
+            return null;
+        }
+        Method method = null;
+        while (clazz != Object.class) {
+            try {
+                method = clazz.getDeclaredMethod(methodName, types);
+
+                if (method != null) {
+//                    forceAccessible(method);
+                    if (!method.isAccessible()) {
+                        method.setAccessible(true);
+                    }
+                    return method;
+                }
+            } catch (Throwable e) {
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return method;
+    }
 }
