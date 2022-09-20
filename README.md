@@ -24,7 +24,7 @@ Legend is a **Hook framework** for **Android Development**, it allows you to Hoo
 
 ### 2. How to use
 Example 1: **Annotation** type Hook
-```java
+``` java
 @Hook("android.widget.Toast::show")
 public static void Toast_show(Toast thiz) {
   thiz.setText("XXXXXXXXX");
@@ -33,7 +33,7 @@ public static void Toast_show(Toast thiz) {
 }
 ```
 Example 2: **Interception** of startActivity
-```java
+``` java
 @Hook("android.app.Activity::startActivity@android.content.Intent")
 public static void Activity_startActivity(Activity thiz, Intent intent) {
   if (!ALLOW_LAUNCH_ACTIVITY) {
@@ -46,12 +46,12 @@ public static void Activity_startActivity(Activity thiz, Intent intent) {
 #### Notice:
 - Write the following code down in where you want to your hooks **enable**.
 
-```java
+``` java
 HookManager.getDefault().applyHooks(YourClass.class);
 ```
 - You can also hook a method **without annotation**.
 
-```java
+``` java
 HookManager.getDefault().hookMethod(originMethod, hookMethod);
 ```
 
@@ -69,7 +69,7 @@ HookManager.getDefault().hookMethod(originMethod, hookMethod);
 <https://github.com/dodola/RocooFix>
 
 ### 5. Help improve Legend
-```java
+``` java
 if (Country.China == your.country) {
   QQGroup.join(530497973);
 } else {
