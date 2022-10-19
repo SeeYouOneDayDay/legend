@@ -5,7 +5,6 @@ package libcore.io;
  * ###################################################
  * ##ClassLoader will not use this version of class.##
  * ###################################################
-
  */
 public final class SizeOf {
 

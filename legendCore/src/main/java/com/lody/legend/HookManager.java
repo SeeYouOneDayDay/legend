@@ -28,12 +28,12 @@ public class HookManager {
      * HookInfo struct size in Dalvik.
      */
     private static final int DVM_HOOK_INFO_SIZE =
-              SizeOf.INT
-            + SizeOf.INT
-            + Struct.UINT_16
-            + Struct.UINT_16
-            + Struct.UINT_32
-            + SizeOf.INT;
+            SizeOf.INT
+                    + SizeOf.INT
+                    + Struct.UINT_16
+                    + Struct.UINT_16
+                    + Struct.UINT_32
+                    + SizeOf.INT;
 
     /**
      * HookInfo struct size in Art.
@@ -50,7 +50,7 @@ public class HookManager {
      * [Key] = MethodName
      * [Value] = BackupMethods
      */
-    private final Map<String, Map<String,List<Method>>> classToBackupMethodsMapping = new ConcurrentHashMap<String, Map<String, List<Method>>>();
+    private final Map<String, Map<String, List<Method>>> classToBackupMethodsMapping = new ConcurrentHashMap<String, Map<String, List<Method>>>();
 
     public static HookManager getDefault() {
         return sDefault;
@@ -102,14 +102,14 @@ public class HookManager {
                                 Logger.e("[---] Cannot resolve Method : %s.", Arrays.toString(methodNameWithSignature));
                             }
                         } catch (Throwable e) {
-                            Logger.e("[---] Error to Load Hook Method From : %s." , hookMethod.getName());
+                            Logger.e("[---] Error to Load Hook Method From : %s.", hookMethod.getName());
                             e.printStackTrace();
                         }
 
-                    }else {
+                    } else {
                         Logger.e("[---] Can't split method and signature : %s.", Arrays.toString(methodNameWithSignature));
                     }
-                }else {
+                } else {
                     Logger.e("[---] Can't understand your statement : [%s].", statement);
                 }
             }
@@ -117,6 +117,11 @@ public class HookManager {
     }
 
 
+    /**
+     * 替换方法
+     * @param origin
+     * @param hook
+     */
     public void hookMethod(Method origin, Method hook) {
         if (origin == null) {
             throw new IllegalArgumentException("Origin method cannot be null");
@@ -124,22 +129,24 @@ public class HookManager {
         if (hook == null) {
             throw new IllegalArgumentException("Hook method cannot be null");
         }
+        // hook后的方法需要是静态方法
         if (!Modifier.isStatic(hook.getModifiers())) {
             throw new IllegalStateException("Hook method must be a static method.");
         }
 
         origin.setAccessible(true);
         hook.setAccessible(true);
+        // 缓存使用
         String methodName = Runtime.isArt() ? hook.getName() : origin.getName();
         Method backupMethod;
-       if (Runtime.isArt()) {
-           backupMethod = hookMethodArt(origin, hook);
-       }else {
-           backupMethod = hookMethodDalvik(origin, hook);
-       }
+        if (Runtime.isArt()) {
+            backupMethod = hookMethodArt(origin, hook);
+        } else {
+            backupMethod = hookMethodDalvik(origin, hook);
+        }
         String className = hook.getDeclaringClass().getName();
-
-        Map<String,List<Method>> methodNameToBackupMethodsMap = classToBackupMethodsMapping.get(className);
+        // 缓存
+        Map<String, List<Method>> methodNameToBackupMethodsMap = classToBackupMethodsMapping.get(className);
         if (methodNameToBackupMethodsMap == null) {
             methodNameToBackupMethodsMap = new ConcurrentHashMap<String, List<Method>>();
             classToBackupMethodsMapping.put(className, methodNameToBackupMethodsMap);
@@ -194,8 +201,10 @@ public class HookManager {
     }
 
     private static Method hookMethodArt(Method origin, Method hook) {
+        // 取地址 --生成offset
         ArtMethod artOrigin = ArtMethod.of(origin);
         ArtMethod artHook = ArtMethod.of(hook);
+        // 备份原方法
         Method backup = artOrigin.backup().getMethod();
         backup.setAccessible(true);
         long originPointFromQuickCompiledCode = artOrigin.getEntryPointFromQuickCompiledCode();
@@ -249,11 +258,12 @@ public class HookManager {
 
         int accessFlags = origin.getModifiers();
         if (Modifier.isNative(accessFlags)) {
-            accessFlags &= ~ Modifier.NATIVE;
+            accessFlags &= ~Modifier.NATIVE;
             artOrigin.setAccessFlags(accessFlags);
         }
+
         long memoryAddress = Memory.alloc(ART_HOOK_INFO_SIZE);
-        Memory.write(memoryAddress,hookInfo.array());
+        Memory.write(memoryAddress, hookInfo.array());
         artOrigin.setEntryPointFromJni(memoryAddress);
 
         return backup;
@@ -265,23 +275,23 @@ public class HookManager {
         StackTraceElement currentInvoking = traceElements[3];
         String invokingClassName = currentInvoking.getClassName();
         String invokingMethodName = currentInvoking.getMethodName();
-        Map<String,List<Method>> methodNameToBackupMethodsMap = classToBackupMethodsMapping.get(invokingClassName);
+        Map<String, List<Method>> methodNameToBackupMethodsMap = classToBackupMethodsMapping.get(invokingClassName);
         if (methodNameToBackupMethodsMap != null) {
             List<Method> methodList = methodNameToBackupMethodsMap.get(invokingMethodName);
             if (methodList != null) {
                 Method method = matchSimilarMethod(methodList, args);
                 if (method != null) {
                     try {
-                       if (Runtime.isArt()) {
-                           return callSuperArt(method, who, args);
-                       }else {
-                           return callSuperDalvik(method, who, args);
-                       }
+                        if (Runtime.isArt()) {
+                            return callSuperArt(method, who, args);
+                        } else {
+                            return callSuperDalvik(method, who, args);
+                        }
                     } catch (Throwable e) {
                         Logger.e("[---] Call super method with error : %s, detail message please see the [Logcat :system.err].", e.getMessage());
                         e.printStackTrace();
                     }
-                }else {
+                } else {
                     Logger.e("[---] Super method cannot found in backup map.");
                 }
             }
@@ -328,7 +338,7 @@ public class HookManager {
         dvmMethod.accessFlags.write(originAccessFlags);
         dvmMethod.nativeFunc.write(originNativeFunc);
         //noinspection unchecked
-        T result = (T) method.invoke(who,args);
+        T result = (T) method.invoke(who, args);
 
         dvmMethod.clazz.write(hookClassData);
         dvmMethod.insns.write(hookInsnsData);
@@ -343,8 +353,8 @@ public class HookManager {
     private Method matchSimilarMethod(List<Method> methodList, Object... args) {
         if (methodList.size() == 1) {
             //Only hold one method
-                return methodList.get(0);
-        }else {
+            return methodList.get(0);
+        } else {
             //Hold more than one methods
             Class<?>[] types = types(args);
             for (Method method : methodList) {
@@ -403,7 +413,6 @@ public class HookManager {
     }
 
 
-
     private static Class<?>[] types(Object... values) {
         if (values == null) {
             return new Class[0];
@@ -419,6 +428,7 @@ public class HookManager {
         return result;
     }
 
-    private static final class NULL {}
+    private static final class NULL {
+    }
 
 }
